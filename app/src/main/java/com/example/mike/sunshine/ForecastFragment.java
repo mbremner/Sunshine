@@ -4,11 +4,15 @@ package com.example.mike.sunshine;
  * Created by Mike on 17/07/2014.
  */
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -30,13 +34,29 @@ public class ForecastFragment extends Fragment {
     public ForecastFragment() {
     }
 
-    /*
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        this.setHasOptionsMenu(true);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu , MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.forecast, menu);
     }
-*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        if (id == R.id.action_refresh){
+
+            FetchWeatherTask fetch = new FetchWeatherTask() ;
+            fetch.execute();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,11 +80,11 @@ public class ForecastFragment extends Fragment {
         return rootView;
 
     }
-        public class FetchWeatherTask extends AsyncTask< Void , Void , String> {
+        public class FetchWeatherTask extends AsyncTask < String , Void , String> {
 
 
             @Override
-            protected String doInBackground(Void... params) {
+            protected String doInBackground( String... postalCode ) {
 
                 HttpURLConnection urlConnection = null;
                 BufferedReader reader = null;
@@ -75,10 +95,22 @@ public class ForecastFragment extends Fragment {
                 try
 
                 {
+
+
+
                     // Construct the URL for the OpenWeatherMap query
                     // Possible parameters are avaiable at OWM's forecast API page, at
                     // http://openweathermap.org/API#forecast
-                    URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+                    //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+                    Uri.Builder builder = new Uri.Builder();
+                    builder.path("http://api.openweathermap.org/data/2.5/forecast/daily");
+                    builder.appendQueryParameter( "q" , postalCode.toString() );
+                    builder.appendQueryParameter( "mode" , "json");
+                    builder.appendQueryParameter( "units" , "metric" );
+                    builder.appendQueryParameter( "cnt" , "7");
+                    Uri uri = builder.build();
+                    Log.v( "uri" , "uri" + uri );
+
 
                     // Create the request to OpenWeatherMap, and open the connection
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -107,6 +139,8 @@ public class ForecastFragment extends Fragment {
                         forecastJsonStr = null;
                     }
                     forecastJsonStr = buffer.toString();
+
+                    Log.v( "Returned" , "Forecast JSON String" + forecastJsonStr );
                 } catch (
                         IOException e
                         )
