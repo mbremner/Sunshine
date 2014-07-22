@@ -4,6 +4,8 @@ package com.example.mike.sunshine;
  * Created by Mike on 17/07/2014.
  */
 
+import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,8 +17,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,7 +85,7 @@ public class ForecastFragment extends Fragment {
        // ArrayList<String> formatedForecasts = new ArrayList<String>(Arrays.asList(forecasts));
 
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
         ArrayList<String> formatedForecasts = new ArrayList(7);
         formatedForecasts.add(0, "Today - Sunny - 88 / 63");
         formatedForecasts.add(1, "Tomorrow - Sunny - 88 / 63");
@@ -94,9 +98,22 @@ public class ForecastFragment extends Fragment {
 
         adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, formatedForecasts);
 
-
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Activity acty = getActivity();
+                Context context =   acty.getApplicationContext();
+
+                CharSequence text = "Hello toast!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
         return rootView;
 
     }
