@@ -4,8 +4,6 @@ package com.example.mike.sunshine;
  * Created by Mike on 17/07/2014.
  */
 
-import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -96,22 +94,17 @@ public class ForecastFragment extends Fragment {
         formatedForecasts.add(6, "Sunday - Sunny - 88 / 63");
 
 
-        adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, formatedForecasts);
+         adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, formatedForecasts);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
+        final ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Activity acty = getActivity();
-                Context context =   acty.getApplicationContext();
 
-                CharSequence text = "Hello toast!";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                String text = adapter.getItem( i );
+                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
             }
         });
         return rootView;
