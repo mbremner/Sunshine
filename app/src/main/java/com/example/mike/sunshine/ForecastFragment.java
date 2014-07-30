@@ -4,9 +4,12 @@ package com.example.mike.sunshine;
  * Created by Mike on 17/07/2014.
  */
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,12 +41,19 @@ import java.util.Date;
  */
 public class ForecastFragment extends Fragment {
 
+
     public ForecastFragment() {
     }
+
     private FetchWeatherTask fetch = new FetchWeatherTask() ;
     public String[] forecasts;
     private ArrayAdapter<String> adapter;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getData();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -63,53 +72,61 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh){
 
-
-            fetch.execute("46" , "-66" );
+            getData();
             return true;
         }
+        if (id == R.id.action_view_location){
+            showLocation();
+        }
+
         return super.onOptionsItemSelected(item);
     }
+
+    public void getData(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String lat = sharedPreferences.getString(getString(R.string.pref_lat_key ) , getString(R.string.pref_lat_default));
+        String lon = sharedPreferences.getString(getString(R.string.pref_lon_key ) ,  getString(R.string.pref_lon_default));
+        fetch.execute(lat , lon );
+        }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
 
-          //   fetch.execute("46" , "-66" );
-
-
-
-
-       // ArrayList<String> formatedForecasts = new ArrayList<String>(Arrays.asList(forecasts));
-
-
-
         ArrayList<String> formatedForecasts = new ArrayList(7);
-        formatedForecasts.add(0, "Today - Sunny - 88 / 63");
-        formatedForecasts.add(1, "Tomorrow - Sunny - 88 / 63");
-        formatedForecasts.add(2, "Wednesday - Sunny - 88 / 63");
-        formatedForecasts.add(3, "Thursday - Sunny - 88 / 63");
-        formatedForecasts.add(4, "Friday - Sunny - 88 / 63");
-        formatedForecasts.add(5, "Saturday - Sunny - 88 / 63");
-        formatedForecasts.add(6, "Sunday - Sunny - 88 / 63");
-
-
-         adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, formatedForecasts);
-
+        adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, formatedForecasts);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 String text = adapter.getItem( i );
-                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+                Intent openDetail = new Intent(getActivity() , DetailActivity.class );
+                openDetail.putExtra(Intent.EXTRA_TEXT , text );
+                startActivity(openDetail);
             }
         });
         return rootView;
 
     }
+    public void showLocation(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String lat = sharedPreferences.getString(getString(R.string.pref_lat_key ) , getString(R.string.pref_lat_default));
+        String lon = sharedPreferences.getString(getString(R.string.pref_lon_key ) ,  getString(R.string.pref_lon_default));
+        String text =  ("geo:" +  lat + "," + lon + "?q=" + lat + "," + lon + "(Weather)"   );
+        //Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        Uri out = Uri.parse(text);
+        //Toast.makeText(getActivity(), out.toString(), Toast.LENGTH_SHORT).show();
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, out);
+        //mapIntent.setData(out);
+        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+    }
+
         public class FetchWeatherTask extends AsyncTask < String , Void , String[]> {
 
             @Override
@@ -139,10 +156,24 @@ public class ForecastFragment extends Fragment {
              */
             private String formatHighLows(double high, double low) {
                 // For presentation, assume the user doesn't care about tenths of a degree.
-                long roundedHigh = Math.round(high);
-                long roundedLow = Math.round(low);
 
-                String highLowStr = roundedHigh + "/" + roundedLow;
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String unit = sharedPreferences.getString(getString(R.string.pref_unit_key ) , getString(R.string.pref_unit_default));
+                long roundedHigh = 0;
+                long roundedLow = 0;
+                if (unit.contentEquals("3")){
+                    roundedHigh = Math.round(high + 273.15 );
+                    roundedLow = Math.round(low + 273.15);
+                }else if (unit.contentEquals("2") ){
+                    roundedHigh = Math.round(high * (9/5) + 32 );
+                    roundedLow = Math.round(low * (9/5) + 32 );
+                }else{
+                    roundedHigh = Math.round(high);
+                    roundedLow = Math.round(low);
+                }
+
+
+                String highLowStr = (roundedHigh + "/" + roundedLow);
                 return highLowStr;
             }
 

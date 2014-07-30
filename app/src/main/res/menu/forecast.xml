@@ -6,4 +6,8 @@
         android:title="@string/action_refresh"
         android:orderInCategory="99"
         app:showAsAction="never" />
+    <item android:id="@+id/action_view_location"
+        android:title="@string/action_view_location"
+        android:orderInCategory="98"
+        app:showAsAction="never" />
 </menu>
