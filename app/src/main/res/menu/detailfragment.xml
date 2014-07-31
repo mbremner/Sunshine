@@ -6,6 +6,7 @@
     tools:context="com.example.mike.sunshine.DetailActivity" >
     <item android:id="@+id/action_share"
         android:title="@string/action_share"
-        android:orderInCategory="99"
+
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         app:showAsAction="always" />
 </menu>
