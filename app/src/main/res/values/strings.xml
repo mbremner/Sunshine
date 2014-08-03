@@ -18,7 +18,31 @@
     <string name="pref_unit_default">1</string>
     <string name="action_view_location">View Location</string>
     <string name="action_share">Share</string>
-    <string-array name="pref_unit_options"><item>Celsius</item><item>Fahrenheit</item><item>Kelvin</item></string-array>
-    <string-array name="pref_unit_values"><item>1</item><item>2</item><item>3</item></string-array>
+    <string name="action_show">Show</string>
+    <string name="action_history">History</string>
+    <string name="pref_start_date_key">StartDate</string>
+    <string name="pref_start_date_label">Start Date</string>
+    <string name="pref_start_date_default">2014.06.11</string>
+    <string name="pref_end_date_key">EndDate</string>
+    <string name="pref_end_date_label">End Date</string>
+    <string name="pref_end_date_default">2014.07.09</string>
+    <string name="pref_time_key">Time</string>
+    <string name="pref_time_label">Time</string>
+    <string name="pref_time_default">10:00</string>
+
+    <string-array name="pref_unit_options">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+        <item>Kelvin</item>
+    </string-array>
+    <string-array name="pref_unit_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="title_activity_history">HistoryActivity</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_history_settings">HistorySettingsActivity</string>
 
 </resources>

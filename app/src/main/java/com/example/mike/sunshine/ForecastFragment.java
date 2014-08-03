@@ -78,7 +78,11 @@ public class ForecastFragment extends Fragment {
         if (id == R.id.action_view_location){
             showLocation();
         }
-
+        if (id == R.id.action_history) {
+            Intent openSettings = new Intent(getActivity() , HistoryActivity.class );
+            startActivity(openSettings);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

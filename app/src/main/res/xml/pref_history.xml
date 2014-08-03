@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <com.example.mike.sunshine.DatePreference
+        android:key="@string/pref_start_date_key"
+        android:title="@string/pref_start_date_label"
+        android:defaultValue="@string/pref_start_date_default"
+        android:singleLine="true"/>
+
+    <com.example.mike.sunshine.DatePreference
+        android:key="@string/pref_end_date_key"
+        android:title="@string/pref_end_date_label"
+        android:defaultValue="@string/pref_end_date_default"
+        android:singleLine="true"/>
+
+    <com.example.mike.sunshine.TimePreference
+        android:key="@string/pref_time_key"
+        android:title="@string/pref_time_label"
+        android:defaultValue="@string/pref_time_default"
+        android:singleLine="true"/>
+
+    <ListPreference
+        android:key="@string/pref_unit_key"
+        android:title="@string/pref_unit_label"
+        android:defaultValue="@string/pref_unit_default"
+        android:entries="@array/pref_unit_options"
+        android:entryValues="@array/pref_unit_values"
+        android:singleLine="true" />
+</PreferenceScreen>
