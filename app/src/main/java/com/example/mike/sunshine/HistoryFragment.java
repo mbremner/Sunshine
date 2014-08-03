@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,21 +46,20 @@ import java.util.LinkedList;
 public class HistoryFragment extends Fragment {
 
     LinkedList<String> weather = new LinkedList<String>();
-
-    public HistoryFragment() {
-    }
-
     LinkedList<FetchWeatherTask> taskList = new LinkedList<FetchWeatherTask>();
 
 
-
+    public HistoryFragment() {
+    }
 
     private ArrayAdapter<String> adapter;
 
     @Override
     public void onResume() {
+        adapter.clear();
         super.onResume();
         getData();
+
     }
 
     @Override
@@ -81,57 +79,8 @@ public class HistoryFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_show){
 
-            Date startDate = null;
-
-
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String startString = sharedPreferences.getString(getString(R.string.pref_start_date_key ) , getString(R.string.pref_start_date_default));
-            String endString = sharedPreferences.getString(getString(R.string.pref_end_date_key ) , getString(R.string.pref_end_date_default));
-            String timeString = sharedPreferences.getString(getString(R.string.pref_time_key ) , getString(R.string.pref_time_default));
-
-            DateFormat formatter = new SimpleDateFormat("yyyy.MM.dd kk:mm");
-            try {
-                startDate = formatter.parse(startString + " " + timeString);
-            }catch (ParseException e){
-
-            }
-
-            Long startUnix = startDate.getTime() / 1000;
-
-            Toast.makeText(getActivity(),startUnix.toString(), Toast.LENGTH_LONG).show();
-
-           /* String[] startDateStrings= startString.split(".");
-            String[] endDateStrings= endString.replaceAll(".", ",").split(",");
-            String[] timeStrings= timeString.split(":");
-            Toast.makeText(getActivity(),timeString, Toast.LENGTH_LONG).show();
-            int[] startDateInts = new int[startDateStrings.length];
-            for (int i = 0; i < startDateInts.length; i++) {
-                try {
-                    startDateInts[i] = Integer.parseInt(startDateStrings[i]);
-                } catch (NumberFormatException nfe) {};
-            }
-            int[] endDateInts = new int[endDateStrings.length];
-            for (int i = 0; i < endDateInts.length; i++) {
-                try {
-                    endDateInts[i] = Integer.parseInt(endDateStrings[i]);
-                } catch (NumberFormatException nfe) {};
-            }
-            int[] timeInts = new int[timeStrings.length];
-            for (int i = 0; i < timeInts.length; i++) {
-                try {
-                    timeInts[i] = Integer.parseInt(timeStrings[i]);
-                } catch (NumberFormatException nfe) {};
-            }
-
-            GregorianCalendar startGreg = new GregorianCalendar(startDateInts[0],startDateInts[1],startDateInts[2],timeInts[0],timeInts[1]);
-            GregorianCalendar endGreg = new GregorianCalendar(endDateInts[0],endDateInts[1],endDateInts[2],timeInts[0],timeInts[1]);
-
-            Long start = startGreg.getTimeInMillis()/1000;
-
-
-
             showData();
-*/
+
             return true;
         }
 
@@ -140,28 +89,39 @@ public class HistoryFragment extends Fragment {
     }
 
     public void getData(){
+        weather = new LinkedList<String>();
+        taskList = new LinkedList<FetchWeatherTask>();
 
-        int startTime = 1402491600;
-        for (int k = 0; k < 30; k++) {
+        Date startDate = null;
+        Date endDate = null;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String startString = sharedPreferences.getString(getString(R.string.pref_start_date_key ) , getString(R.string.pref_start_date_default));
+        String endString = sharedPreferences.getString(getString(R.string.pref_end_date_key ) , getString(R.string.pref_end_date_default));
+        String timeString = sharedPreferences.getString(getString(R.string.pref_time_key ) , getString(R.string.pref_time_default));
 
-            int morningStartTime = startTime + (k * 86400);
-            int morningEndTime = morningStartTime + 3600;
-            Integer useStartTime = 0;
-            Integer useEndTime = 0;
+        DateFormat formatter = new SimpleDateFormat("yyyy.MM.dd kk:mm");
+        try {
+            startDate = formatter.parse(startString + " " + timeString);
+        }catch (ParseException e){
+
+        }
+        try {
+            endDate = formatter.parse(endString + " " + timeString);
+        }catch (ParseException e){
+
+        }
+
+        Long startUnix = startDate.getTime() / 1000;
+        Long endUnix = (endDate.getTime() / 1000) + 1;
 
 
-            for(int l = 0 ; l < 2 ; l++){
+
+        for (Long k = startUnix; k < endUnix ; k += 86400) {
+
                 taskList.add(new FetchWeatherTask());
-                if (l == 1){
-                    useStartTime = morningStartTime + 18000;
-                    useEndTime = morningEndTime + 18000;
-                }else{
-                    useStartTime = morningStartTime ;
-                    useEndTime = morningEndTime ;
-                }
-                taskList.getLast().execute(useStartTime.toString(), useEndTime.toString());
+                taskList.getLast().execute(k.toString());
 
-            }
+
         }
 
 
@@ -182,7 +142,7 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        ArrayList<String> formattedHistory = new ArrayList(60);
+        ArrayList<String> formattedHistory = new ArrayList(1);
         adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, formattedHistory);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
@@ -201,23 +161,6 @@ public class HistoryFragment extends Fragment {
 
     }
 
-    /*
-    public void showLocation(){
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String lat = sharedPreferences.getString(getString(R.string.pref_lat_key ) , getString(R.string.pref_lat_default));
-        String lon = sharedPreferences.getString(getString(R.string.pref_lon_key ) ,  getString(R.string.pref_lon_default));
-        String text =  ("geo:" +  lat + "," + lon + "?q=" + lat + "," + lon + "(Weather)"   );
-        //Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
-        Uri out = Uri.parse(text);
-        //Toast.makeText(getActivity(), out.toString(), Toast.LENGTH_SHORT).show();
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, out);
-        //mapIntent.setData(out);
-        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivity(mapIntent);
-        }
-    }
-    */
 
     public class FetchWeatherTask extends AsyncTask<String, Void ,String[]> {
 
@@ -228,8 +171,6 @@ public class HistoryFragment extends Fragment {
             //fetch = new FetchWeatherTask();
             weather.add(weathers[0]) ;
         }
-
-
 
         private String getReadableDateString(long time){
             // Because the API returns a unix timestamp (measured in seconds),
@@ -247,22 +188,26 @@ public class HistoryFragment extends Fragment {
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String unit = sharedPreferences.getString(getString(R.string.pref_unit_key), getString(R.string.pref_unit_default));
-            long roundedHigh = 0;
-            long roundedLow = 0; /*
-                if (unit.contentEquals("3")){
-                    roundedHigh = Math.round(high + 273.15 );
-                    roundedLow = Math.round(low + 273.15);
+            long roundedTemp = 0;
+            long roundedWind = 0;
+            String tempWind = null;
+            if (unit.contentEquals("3")){
+                    roundedTemp = Math.round(temp);
+                    roundedWind = Math.round(wind *3.6);
+                    tempWind = (   roundedTemp + "K  Wind: " + roundedWind + "km/h");
                 }else if (unit.contentEquals("2") ){
-                    roundedHigh = Math.round(high * (9/5) + 32 );
-                    roundedLow = Math.round(low * (9/5) + 32 );
-                }else{*/
-            roundedHigh = Math.round(temp - 273.15);
-            roundedLow = Math.round(wind * 3.6);
-            //}
+                    roundedTemp = Math.round((temp -273.15 )* (9/5) + 32 );
+                    roundedWind = Math.round(wind * 3.6 / 1.6 );
+                    tempWind = (   roundedTemp + "°f  Wind: " + roundedWind + "miles/h");
+                }else{
+                    roundedTemp = Math.round(temp - 273.15);
+                    roundedWind = Math.round(wind * 3.6);
+                    tempWind = (   roundedTemp + "°c  Wind: " + roundedWind + "km/h");
+            }
 
 
-            String highLowStr = (   roundedHigh + "°c  Wind: " + roundedLow + "km/h");
-            return highLowStr;
+
+            return tempWind;
         }
 
         /**
@@ -356,10 +301,9 @@ public class HistoryFragment extends Fragment {
                 builder.appendPath("city");
                 builder.appendQueryParameter("q", "fredericton");
                 builder.appendQueryParameter("start", time[0]);
-                builder.appendQueryParameter("end", time[1]);
                 builder.appendQueryParameter("mode", "json");
                 builder.appendQueryParameter("units", "metric");
-                // builder.appendQueryParameter( "cnt" , "1");
+                builder.appendQueryParameter( "cnt" , "1");
                 Uri uri = builder.build();
 
                 URL url = new URL(uri.toString());

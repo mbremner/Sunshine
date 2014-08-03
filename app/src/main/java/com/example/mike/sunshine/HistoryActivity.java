@@ -41,4 +41,5 @@ public class HistoryActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

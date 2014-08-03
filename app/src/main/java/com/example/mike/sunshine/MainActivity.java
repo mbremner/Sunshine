@@ -3,6 +3,7 @@ package com.example.mike.sunshine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,8 +19,39 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new ForecastFragment())
                     .commit();
         }
+        Log.v("tag" , "create");
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("tag" , "start");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v("tag" , "resume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v("tag" , "pause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v("tag" , "stop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v("tag" , "destroy");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
