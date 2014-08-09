@@ -53,4 +53,17 @@ public class WeatherContract {
         // Degrees are meteorological degrees (e.g, 0 is north, 180 is south).  Stored as floats.
         public static final String COLUMN_DEGREES = "degrees";
     }
+    public static final class LocationEntry implements BaseColumns {
+
+        public static final String TABLE_NAME = "location";
+
+        // Column with the city id  key into the location table.
+        public static final String COLUMN_ID = "location_id";
+        // Column wit the city name
+        public static final String COLUMN_CITY_NAME = "name";
+        // Columns wit the location setting
+        public static final String COLUMN_LOCATION_SETTING = "setting";
+        public static final String COLUMN_LATITUDE = "lat";
+        public static final String COLUMN_LONGITUDE = "lon";
+    }
 }
