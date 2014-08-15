@@ -29,7 +29,7 @@ public class WeatherContract {
         // Column with the foreign key into the location table.
         public static final String COLUMN_LOC_KEY = "location_id";
         // Date, stored as Text with format yyyy-MM-dd
-        public static final String COLUMN_DATETEXT = "date";
+        public static final String COLUMN_DATE = "date";
         // Weather id as returned by API, to identify the icon to be used
         public static final String COLUMN_WEATHER_ID = "weather_id";
 
