@@ -43,7 +43,7 @@ public class WeatherContract {
                 "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
 
         public static final String CONTENT_ITEM_TYPE =
-                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" +      PATH_WEATHER;
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
 
         public static final String TABLE_NAME = "weather";
 
@@ -119,6 +119,9 @@ public class WeatherContract {
         public static final String COLUMN_LATITUDE = "lat";
         public static final String COLUMN_LONGITUDE = "lon";
 
+        public static Uri buildLocationUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI , id);
+        }
 
     }
 }

@@ -46,6 +46,9 @@
             android:name=".HistorySettingsActivity"
             android:label="@string/title_activity_history_settings" >
         </activity>
+        <provider
+            android:authorities="com.example.mike.sunshine"
+            android:name=".Data.WeatherProvider" />
     </application>
 
 </manifest>
