@@ -111,7 +111,7 @@ public class WeatherContract {
         public static final String TABLE_NAME = "location";
 
         // Column with the city id  key into the location table.
-        public static final String COLUMN_ID = "location_id";
+        public static final String _ID = "location_id";
         // Column wit the city name
         public static final String COLUMN_CITY_NAME = "name";
         // Columns wit the location setting
